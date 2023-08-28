@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.UserMapper">
+
+
+    <select id="getAll" resultType="User" parameterType="Integer">
+        select * from bbs_user
+    </select>
+
+    <select id="adminLogin" resultType="User" parameterType="User">
+        select * from bbs_user where uNumber = #{uNumber} and uPassWord = #{uPassWord} and uRole = 0
+    </select>
+
+
+    <select id="getById" resultType="User" parameterType="Integer">
+        select * from bbs_user where uId = #{uId};
+    </select>
+
+    <select id="getByUserName" parameterType="String" resultType="User">
+        select * from bbs_user where uNumber = #{uNumber};
+    </select>
+
+    <select id="getArticlesById" parameterType="Integer" resultType="Article">
+        select * from bbs_article where aId = #{aId};
+    </select>
+    <!-- 性别为2暂未设置-->
+    <insert id="insertUser" parameterType="User">
+        insert into bbs_user
+        values(default ,#{uNumber},
+        #{uPassWord},'user_qqq',
+        #{uImageUrl},2,2,#{uEmail},'none',0,#{uRegistTime},0);
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update bbs_user
+        <set>
+            <if test="uPassWord!=null and uPassWord!=''">
+                uPassWord = #{uPassWord},
+            </if>
+            <if test="uNickName!=null and uNickName!=''">
+                uNickName = #{uNickName},
+            </if>
+            <if test="uImageUrl!=null and uImageUrl!=''">
+                uImageUrl = #{uImageUrl},
+            </if>
+            <if test="uGender!=null">
+                uGender = #{uGender},
+            </if>
+            <if test="uEmail!=null and uEmail!=''">
+                uEmail = #{uEmail},
+            </if>
+            <if test="uAddress!=null and uAddress!=''">
+                uAddress = #{uAddress},
+            </if>
+        </set>
+            <where>
+                uId = #{uId}
+            </where>
+    </update>
+
+    <update id="changeState" parameterType="Integer">
+        update bbs_user set uState = 1 where uId = #{uId};
+    </update>
+
+    <update id="unBan" parameterType="Integer">
+        update bbs_user set uState = 0 where uId = #{uId};
+    </update>
+
+    <resultMap id="userMap" type="User">
+        <id property="uId" column="uId" javaType="Integer"/>
+        <result property="uNumber" column="uNumber" javaType="java.lang.Integer"/>
+        <result property="uPassWord" column="uPassWord" javaType="java.lang.String"/>
+        <result property="uNickName" column="uNickName" javaType="java.lang.String"/>
+        <result property="uImageUrl" column="uImageUrl" javaType="java.lang.String"/>
+        <result property="uRole" column="uRole" javaType="java.lang.Integer"/>
+        <result property="uGender" column="uGender" javaType="java.lang.Integer"/>
+        <result property="uEmail" column="uEmail" javaType="java.lang.String"/>
+        <result property="uAddress" column="uAddress" javaType="java.lang.String"/>
+        <result property="uState" column="uState" javaType="java.lang.Integer"/>
+        <result property="uRegistTime" column="uRegistTime" javaType="java.lang.String"/>
+        <result property="uIntegral" column="uIntegral" javaType="java.lang.Integer"/>
+
+        <collection property="articles" javaType="java.util.List" ofType="Article"
+        select="com.ly.bbs.mapper.ArticleMapper.getByUid" column="uId"/>
+
+    </resultMap>
+
+
+    <select id="getUserAndArticlesByUid" parameterType="Integer" resultMap="userMap">
+        select * from bbs_user where uId = #{uId}
+    </select>
+
+
+    <!--
+     <insert id="insertUser" parameterType="User">
+        insert into bbs_user
+        values(default ,#{uNumber},
+        #{uPassWord},#{uNickName},
+        #{uImageUrl},2,#{uGender},#{uEmail},#{uAddress},0,#{uRegistTime},0);
+    </insert>
+    -->
+
+    <!--<insert id="insertArticle" parameterType="Article">
+            insert into blog_article values (default ,#{blogTitle},#{uId},#{createTime},#{blogContent},#{likeNumber},#{clickNumber});
+        </insert>
+
+    <delete id="deleteOneByAId" parameterType="Integer">
+            delete from blog_article where id=#{id};
+        </delete>
+
+    &lt;!&ndash; 获取n页资源列表 &ndash;&gt;
+    <select id="jumpList" resultType="Article" parameterType="Integer">
+                select * from blog_article where 1=1 order by createTime desc limit #{index},8;
+        </select>
+
+    <delete id="deleteByUId" parameterType="Integer">
+            delete from blog_article where uId=#{id};
+        </delete>
+
+
+    &lt;!&ndash;likeNumber used to as a state &ndash;&gt;
+    <update id="updateOneByAID" parameterType="Article">
+        update blog_article
+        <set>
+            <if test="blogTitle!=null and blogTitle!=''">
+                blogTitle=#{blogTitle},
+            </if>
+            <if test="blogContent!=null and blogContent!=''">
+                blogContent=#{blogContent},
+            </if>
+            <if test="clickNumber!=null">
+                clickNumber=#{clickNumber},
+            </if>
+            <if test="likeNumber!=null">
+                likeNumber=#{likeNumber},
+            </if>
+        </set>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+
+    <select id="selectByAId" parameterType="Integer" resultType="Article">
+            select * from blog_article where id=#{id};
+        </select>
+
+    <select id="getAllByUId" parameterType="Integer" resultType="Article">
+            select * from blog_article where uId=#{id};
+        </select>
+
+    <select id="getAll" parameterType="Integer" resultType="Article">
+            select * from blog_article;
+        </select>
+
+    <select id="getAllByKeyWord" parameterType="String" resultType="Article">
+            select * from blog_article blogTitle like '%${keyWord}%';
+        </select>
+
+    <select id="getAllByHot" resultType="Article">
+            select * from blog_article order by clickNumber desc limit 0,4;
+        </select>
+
+    <select id="getAllByNew" resultType="Article">
+            select * from blog_article order by createTime desc limit 0,4;
+        </select>
+
+    <select id="getUserArticleCount" parameterType="Integer" resultType="Integer">
+            select count(*) from blog_article where uId=#{id};
+        </select>
+
+    <select id="getUserClickNumber" parameterType="Integer" resultType="Integer">
+            select sum(clickNumber) as sum from blog_article where uId=#{id};
+        </select>
+
+    <select id="getArticleCount" resultType="Integer">
+            select count(*) from blog_article;
+        </select>-->
+
+
+    <!--<select id="getUserByEmail" resultType="User" parameterType="String" >
+        select * from blog_user where email = #{email}
+    </select>-->
+
+</mapper>

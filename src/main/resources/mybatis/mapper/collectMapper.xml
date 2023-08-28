@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.CollectMapper">
+
+   <select id="getAll" resultType="Collect">
+       select * from bbs_collect
+   </select>
+
+    <select id="getByUid" parameterType="Integer" resultType="Collect">
+        select * from bbs_collect where uId = #{uId}
+    </select>
+
+    <select id="getByCid" parameterType="Integer" resultType="Collect">
+        select * from bbs_collect where cId = #{cId}
+    </select>
+
+    <select id="getCount" parameterType="Integer" resultType="Integer">
+        select count(cId) bbs_collect where aId = #{aId}
+    </select>
+
+    <delete id="deleteByCid" parameterType="Integer">
+        delete from bbs_collect where cId = #{cId}
+    </delete>
+
+    <insert id="insert" parameterType="Collect">
+        insert into bbs_collect values(default ,#{uId},#{aId},#{cTime})
+    </insert>
+
+
+</mapper>

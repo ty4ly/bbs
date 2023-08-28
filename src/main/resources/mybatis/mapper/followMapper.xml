@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.FollowMapper">
+
+
+    <select id="getAll" resultType="Follow">
+        select * from bbs_follow
+    </select>
+
+    <resultMap id="followMap1" type="Follow">
+        <id property="fId" column="fId" javaType="java.lang.Integer"/>
+        <result property="uId" column="uId" javaType="java.lang.Integer"/>
+        <result property="uIded" column="uIded" javaType="java.lang.Integer"/>
+        <result property="fTime" column="fTime" javaType="java.lang.String"/>
+        <association property="usered" javaType="User">
+            <id property="uId" column="uId" javaType="java.lang.Integer"/>
+            <result property="uNickName" column="uNickName" javaType="java.lang.String"/>
+            <result property="uImageUrl" column="uImageUrl" javaType="java.lang.String"/>
+        </association>
+    </resultMap>
+
+    <select id="getByUid" parameterType="Integer" resultMap="followMap1">
+        select a.fId,a.uId,a.uIded,a.fTime,b.uId,b.uNickName,b.uImageUrl
+        from bbs_follow as a inner join bbs_user
+        on using(uId)
+        where a.uId = #{uId}
+    </select>
+
+    <!--使用子查询  获取我的关注列表-->
+    <select id="getByUid2" parameterType="Integer" resultType="User">
+        select * from bbs_user
+        where uId in (
+            select uIded from bbs_follow where uId = #{uId}
+        )
+    </select>
+
+    <!--获取谁关注了我  的列表-->
+    <select id="getByUided" resultType="User" parameterType="Integer">
+        select * from bbs_user
+        where uId in(
+            select uId from bbs_follow where uIded = #{uId}
+        )
+    </select>
+
+    <select id="getByFid" parameterType="Integer" resultType="Follow">
+        select * from bbs_follow
+    </select>
+
+    <select id="getFansCount" resultType="Integer" parameterType="Integer">
+        select count(fId) from bbs_follow where uIded = #{id}
+    </select>
+
+    <insert id="insertFollow" parameterType="Follow">
+        insert into bbs_follow values(default ,#{uId},#{uIded},#{fTime})
+    </insert>
+
+    <delete id="deleteFollowByUidedAndUid" parameterType="Follow">
+        delete from bbs_follow where uId = #{uId} and uIded = #{uIded}
+    </delete>
+
+</mapper>

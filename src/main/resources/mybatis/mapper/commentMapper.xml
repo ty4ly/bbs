@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.CommentMapper">
+
+    <resultMap id="commentMap1" type="Comment">
+        <id property="mId" column="mId" javaType="java.lang.Integer"/>
+        <result property="uId" column="uId" javaType="java.lang.Integer"/>
+        <result property="aId" column="aId" javaType="java.lang.Integer"/>
+        <result property="mCommentedId" column="mCommentedId" javaType="java.lang.Integer"/>
+        <result property="mContent" column="mContent" javaType="java.lang.String"/>
+        <result property="mTime" column="mTime" javaType="java.lang.String"/>
+        <result property="mType" column="mType" javaType="java.lang.String"/>
+        <association property="user" javaType="User">
+            <id property="uId" column="uId" javaType="java.lang.Integer"/>
+            <result property="uNickName" column="uNickName" javaType="java.lang.String"/>
+            <result property="uImageUrl" column="uImageUrl" javaType="java.lang.String"/>
+        </association>
+
+        <collection property="comments" javaType="java.util.ArrayList" ofType="Comment" select="getSecondComment" column="{id=mCommentedId}"/>
+
+    </resultMap>
+
+    <select id="getAllAndSecondByAid" resultMap="commentMap1">
+        select a.mId,a.uId,a.aId,a.mCommentedId,a.mContent,a.mTime,a.mType,b.uId,b.uNickName,b.uImageUrl
+        from bbs_comment as a inner join bbs_user as b
+        on a.uId = b.uId
+        where a.aId = #{aId}
+    </select>
+
+
+    <resultMap id="commentMap2" type="Comment">
+        <id property="mId" column="mId" javaType="java.lang.Integer"/>
+        <result property="uId" column="uId" javaType="java.lang.Integer"/>
+        <result property="mContent" column="mContent" javaType="java.lang.String"/>
+        <result property="mTime" column="mTime" javaType="java.lang.String"/>
+        <association property="user" javaType="User">
+            <id property="uId" column="uId" javaType="java.lang.Integer"/>
+            <result property="uNickName" column="uNickName" javaType="java.lang.String"/>
+            <result property="uImageUrl" column="uImageUrl" javaType="java.lang.String"/>
+        </association>
+    </resultMap>
+
+    <select id="getSecondComment" parameterType="Integer" resultMap="commentMap2">
+        select a.mId,a.uId,a.mContent,a.mTime,b.uId,b.uNickName,b.uImageUrl
+        from bbs_comment as a inner join bbs_user
+        on a.uId = b.uId
+        where mCommentedId = #{id}
+    </select>
+
+
+
+    <select id="getAll" resultType="Comment">
+         select * from bbs_comment
+    </select>
+
+    <select id="getByUid" parameterType="Integer" resultType="Comment">
+        select * from bbs_comment where uId = #{uId}
+    </select>
+
+    <select id="getByAid" parameterType="Integer" resultType="Comment">
+        select * from bbs_comment where aId = #{aId}
+    </select>
+
+    <insert id="insertComment" parameterType="Comment">
+        insert into bbs_comment values (default ,#{uId},#{aId},#{mCommentedId},#{mContent},#{mTime},#{mType})
+    </insert>
+
+    <delete id="deleteCommentByMid" parameterType="Integer">
+        delete from bbs_comment where mId = #{mId}
+    </delete>
+
+    <delete id="deleteCommentByAid" parameterType="Integer">
+        delete from bbs_comment where aId = #{aId}
+    </delete>
+
+    <delete id="deleteCommentByUid" parameterType="Integer">
+        delete from bbs_comment where uId = #{uId}
+    </delete>
+
+
+
+</mapper>

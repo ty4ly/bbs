@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.ScoreMapper">
+
+    <select id="getAll" resultType="Score">
+        select * from bbs_score
+    </select>
+
+    <select id="getBySid" parameterType="Integer" resultType="Score">
+        select * from bbs_score where sId = #{sId}
+    </select>
+
+    <select id="getByUidAndAid" parameterType="Score" resultType="Score">
+        select * from bbs_score where uId = #{uId} and aId = #{aId}
+    </select>
+
+    <select id="getByUid" parameterType="Integer" resultType="Score">
+        select * from bbs_score where uId = #{uId}
+    </select>
+
+    <select id="getByAid" parameterType="Integer" resultType="Score">
+        select * from bbs_score where aId = #{aId}
+    </select>
+
+    <insert id="insertScore" parameterType="Score">
+        insert into bbs_score values (default ,#{sRate},#{aId},#{uId},#{sTime})
+    </insert>
+
+
+
+
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.TypeMapper">
+
+    <select id="getAll" resultType="Type">
+        select * from bbs_type
+    </select>
+
+    <select id="getByTid" parameterType="Integer" resultType="Type">
+        select * from bbs_type where tId = #{tId}
+    </select>
+
+    <insert id="addType" parameterType="Type">
+        insert into bbs_type values(default ,#{tName})
+    </insert>
+
+    <select id="getBytName" parameterType="String" resultType="Type">
+        select tId from bbs_type where tName = #{tName}
+    </select>
+
+    <delete id="deleteType" parameterType="Integer">
+        delete from bbs_type where tId = #{tId}
+    </delete>
+
+</mapper>

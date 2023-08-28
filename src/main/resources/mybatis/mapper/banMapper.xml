@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.bbs.mapper.BanMapper">
+
+    <select id="getByBid" parameterType="Integer" resultType="Ban">
+        select * from bbs_ban where bId = #{bId}
+    </select>
+
+    <select id="getAll" resultType="Ban">
+        select * from bbs_ban
+    </select>
+    
+    <select id="getByUidLastOne" parameterType="Integer" resultType="Ban">
+        select * from bbs_ban where uId = #{uId} order by bTIme desc limit 0,1;
+    </select>
+
+    <select id="getAllByUid" parameterType="Integer" resultType="Ban">
+        select * from bbs_ban where uId = #{uId}
+    </select>
+
+    <select id="delByBid" parameterType="Integer" resultType="Ban">
+        select * from bbs_ban where bId = #{bId};
+    </select>
+
+    <update id="updateBan" parameterType="Ban">
+        update bbs_ban set bLast = '0' where bId = #{bId}
+    </update>
+
+
+    <resultMap id="banMap1" type="Ban">
+        <id property="bId" column="bId" javaType="java.lang.Integer"/>
+        <result property="uId" column="uId" javaType="Integer"/>
+        <result property="bTime" column="bTime" javaType="java.lang.String"/>
+        <result property="bLast" column="bLast" javaType="java.lang.String"/>
+        <association property="user" javaType="User" select="com.ly.bbs.mapper.UserMapper.getById" column="uId"/>
+    </resultMap>
+
+    <select id="getBanAndUser" parameterType="Integer" resultMap="banMap1">
+        select bId,uId,bTime,bLast from bbs_ban where uId = #{uId}
+    </select>
+
+    <select id="getBanAndUser2" parameterType="Integer" resultMap="banMap1">
+        select bId,uId,bTime,bLast from bbs_ban
+    </select>
+
+    <insert id="insertBan" parameterType="Ban">
+        insert into bbs_ban values (default ,#{uId},#{bTime},'3')
+    </insert>
+
+
+</mapper>
